@@ -2166,6 +2166,8 @@ while also allowing users to translate our app as well. New, specific strings to
     <!-- Show in Latin letters, in Settings > Lyrics and in the lyrics view's settings (LyricsLatin). -->
     <string name="lyrics_latin_title">Show in Latin letters</string>
     <string name="lyrics_latin_description">Adds a line in Latin letters under Japanese, Korean, Chinese, Russian and other lyrics.</string>
+    <string name="lyrics_romanize_title">Auto-romanize lyrics</string>
+    <string name="lyrics_romanize_description">Automatically romanize lyrics in Arabic, Thai, Asian, Cyrillic, Greek and other scripts when fetched.</string>
     <string name="equalizer_headphones">Your headphones</string>
     <string name="equalizer_headphones_pick">Pick your model, and the bands follow its measurements from AutoEq.</string>
     <string name="equalizer_headphones_set">%1$s, measured by %2$s</string>

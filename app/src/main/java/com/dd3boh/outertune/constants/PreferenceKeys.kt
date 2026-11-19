@@ -225,6 +225,12 @@ val LyricUpdateSpeed = stringPreferencesKey("lyricUpdateSpeed")
  */
 val LyricLatinKey = booleanPreferencesKey("lyricLatin")
 
+/**
+ * Auto-romanize lyrics: automatically romanize lyrics when fetched (Arabic, Thai, Asian, Cyrillic, Greek, etc.)
+ * if not already romanized by Latin letters. On by default.
+ */
+val LyricAutoRomanizeKey = booleanPreferencesKey("lyricAutoRomanize")
+
 
 /**
  * Storage

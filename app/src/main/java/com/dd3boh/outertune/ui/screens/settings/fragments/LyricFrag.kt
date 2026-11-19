@@ -40,6 +40,7 @@ import androidx.compose.material.icons.rounded.SwapVert
 import com.dd3boh.outertune.constants.LyricFontSizeKey
 import com.dd3boh.outertune.constants.LyricKaraokeEnable
 import com.dd3boh.outertune.constants.LyricLatinKey
+import com.dd3boh.outertune.constants.LyricAutoRomanizeKey
 import com.dd3boh.outertune.constants.LyricSourcePrefKey
 import com.dd3boh.outertune.constants.Unreleased
 import com.dd3boh.outertune.constants.LyricTrimKey
@@ -68,6 +69,7 @@ fun ColumnScope.LyricFormatFrag() {
     )
     val (lyricFontSize, onLyricFontSizeChange) = rememberPreference(LyricFontSizeKey, defaultValue = 20)
     val (lyricLatin, onLyricLatinChange) = rememberPreference(LyricLatinKey, defaultValue = false)
+    val (lyricAutoRomanize, onLyricAutoRomanizeChange) = rememberPreference(LyricAutoRomanizeKey, defaultValue = true)
 
     var showFontSizeDialog by remember {
         mutableStateOf(false)
@@ -105,6 +107,15 @@ fun ColumnScope.LyricFormatFrag() {
             onCheckedChange = onLyricLatinChange
         )
     }
+
+    SwitchPreference(
+        modifier = Modifier.settingRow(R.string.lyrics_romanize_title),
+        title = { Text(stringResource(R.string.lyrics_romanize_title)) },
+        description = stringResource(R.string.lyrics_romanize_description),
+        icon = { Icon(Icons.Rounded.Translate, null) },
+        checked = lyricAutoRomanize,
+        onCheckedChange = onLyricAutoRomanizeChange
+    )
 
 
     /**

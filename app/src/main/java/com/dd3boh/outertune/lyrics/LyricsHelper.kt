@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.util.LruCache
 import com.dd3boh.outertune.constants.LyricSourcePrefKey
+import com.dd3boh.outertune.constants.LyricAutoRomanizeKey
 import com.dd3boh.outertune.constants.LyricsSourceOrderKey
 import com.dd3boh.outertune.constants.LyricTrimKey
 import com.dd3boh.outertune.constants.MultilineLrcKey
@@ -73,7 +74,7 @@ class LyricsHelper @Inject constructor(
      * If no database is provided, the database source is disabled
      */
     suspend fun getLyrics(mediaMetadata: MediaMetadata): SemanticLyrics? =
-        lookups.get(mediaMetadata.id) { resolveLyrics(mediaMetadata) }
+        lookups.get(mediaMetadata.id) { autoRomanize(resolveLyrics(mediaMetadata)) }
 
     /** What [refetch] came back with. */
     sealed interface Refetched {
@@ -99,7 +100,7 @@ class LyricsHelper @Inject constructor(
         val prefLocal = context.dataStore.get(LyricSourcePrefKey, true)
 
         val localLyrics = getLocalLyrics(mediaMetadata, LrcUtils.LrcParserOptions(trim, multiline, "Unable to parse lyrics"))
-        if (prefLocal && localLyrics != null) return Refetched.Found(localLyrics)
+        if (prefLocal && localLyrics != null) return Refetched.Found(autoRomanize(localLyrics) ?: localLyrics)
 
         val remote = getRemoteLyrics(mediaMetadata)
         val found = remote.lyrics?.let { parse(it, trim, multiline) }
@@ -109,10 +110,17 @@ class LyricsHelper @Inject constructor(
             database.query {
                 upsert(LyricsEntity(id = mediaMetadata.id, lyrics = remote.lyrics))
             }
-            return Refetched.Found(found)
+            return Refetched.Found(autoRomanize(found) ?: found)
         }
-        if (localLyrics != null) return Refetched.Found(localLyrics)
+        if (localLyrics != null) return Refetched.Found(autoRomanize(localLyrics) ?: localLyrics)
         return if (remote.answered) Refetched.NoneFound else Refetched.Failed
+    }
+
+    private fun autoRomanize(lyrics: SemanticLyrics?): SemanticLyrics? {
+        if (lyrics == null) return null
+        val enabled = context.dataStore.get(LyricAutoRomanizeKey, defaultValue = true)
+        if (!enabled) return lyrics
+        return LyricsRomanizer.romanize(lyrics)
     }
 
     private suspend fun resolveLyrics(mediaMetadata: MediaMetadata): SemanticLyrics? {
